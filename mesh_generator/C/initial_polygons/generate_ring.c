@@ -34,5 +34,7 @@ int main(int argc, char *argv[]) {
 		printf("%lf %lf\n", x, y);
 	}
 
+	printf("\n");
+	
 	return 0;
 }
