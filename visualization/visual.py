@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt
 
 class Window(QWidget):
         figure = None
-
+        triangulation = None
         def __init__(self):
                 super().__init__()
                 self.initUI()
@@ -28,6 +28,10 @@ class Window(QWidget):
                 button_clear = QPushButton('Clear', self)
                 button_clear.setGeometry(230, 10, 100, 30)
                 button_clear.clicked.connect(self.clear_widget)
+
+                button_build_triangle = QPushButton('Triagle', self)
+                button_build_triangle.setGeometry(340, 10, 100, 30)
+                button_build_triangle.clicked.connect(self.build_triangle)
 
                 self.show()
 
@@ -54,8 +58,23 @@ class Window(QWidget):
 
         def clear_widget(self):
                 self.figure = None
+                self.triangulation = None
                 self.update()
         
+        def build_triangle(self):
+                fname = QFileDialog.getOpenFileName(self, 'Open file')[0]
+                if fname == '':
+                        return
+                f = open(fname, 'r')
+                self.triangulation = []
+                while True:
+                        line = f.readline()
+                        if line == '':
+                                break
+                        else:
+                                self.triangulation.append([int(float(i)) for i in line.strip().split()])
+
+
         def paintEvent(self, event):
                 painter = QPainter(self)
                 painter.setPen(Qt.black)
@@ -69,16 +88,27 @@ class Window(QWidget):
                 painter.drawLine( 30,  80,  25,  85) # arrow Oy
                 painter.drawLine( 30,  80,  35,  85) # arrow Oy
                 
-                if self.figure == None:
-                        return
-                for contour in self.figure:
-                        for i in range(-1, len(contour) - 1):
-                                painter.drawLine(
-                                        30 + contour[i][0],
-                                        720 - contour[i][1],
-                                        30 +contour[i + 1][0],
-                                        720 - contour[i + 1][1]
-                                )
+                if self.figure != None:
+                        for contour in self.figure:
+                                for i in range(-1, len(contour) - 1):
+                                        painter.drawLine(
+                                                30 + contour[i][0],
+                                                720 - contour[i][1],
+                                                30 + contour[i + 1][0],
+                                                720 - contour[i + 1][1]
+                                        )
+                if self.triangulation != None:
+                        for triangle in self.triangulation:
+                                Ax, Ay, Bx, By, Cx, Cy = triangle
+                                painter.setPen(Qt.red)
+                                painter.drawPoint(30 + Ax, 720 - Ay)
+                                painter.drawPoint(30 + Bx, 720 - By)
+                                painter.drawPoint(30 + Cx, 720 - Cy)
+
+                                painter.setPen(Qt.black)
+                                painter.drawLine(30 + Ax, 720 - Ay, 30 + Bx, 720 - By)
+                                painter.drawLine(30 + Bx, 720 - By, 30 + Cx, 720 - Cy)
+                                painter.drawLine(30 + Cx, 720 - Cy, 30 + Ax, 720 - Ay)
 
         
 if __name__ == '__main__':
