@@ -60,45 +60,45 @@ def delaunay_condition(A, B, C, vertex):
                 [D.x, D.y, D.x ** 2 + D.y ** 2, 1]
         ], dtype=float)) <= 0
 
-def flip(A, B, vertex, last_v, side=None):
-        print(A, B, vertex)
-        if last_v == None:
-                C = list(edge_dict[pair(A, B)])[0]
-        else:
-                l = list(edge_dict[pair(A, B)] ^ set([last_v]))
-                if len(l) == 0:
-                        edge_dict[pair(A, B)] = set([vertex])
-                        if side == 'left':
-                                return B
-                        elif side == 'right':
-                                return A
+def qwe():
+        for key in edge_dict:
+                print(key, edge_dict[key])
+
+def flip(A, B, vertex):
+        if len(edge_dict[pair(A, B)]) == 0:
+                edge_dict[pair(A, B)] = set([vertex])
+                if not pair(A, vertex) in edge_dict:
+                        edge_dict[pair(A, vertex)] = set([B])
                 else:
-                        C = l[0]
-                
-        print('C:', C)
+                        edge_dict[pair(A, vertex)] |= set([B])
+                if not pair(B, vertex) in edge_dict:
+                        edge_dict[pair(B, vertex)] = set([A])
+                else:
+                        edge_dict[pair(B, vertex)] |= set([A])
+                return
+
+        C = list(edge_dict[pair(A, B)])[0]         
+
         is_good = delaunay_condition(B, C, A, vertex)
         if is_good:
-                print('yes')
                 edge_dict[pair(A, B)] |= set([vertex])
-                if side == 'left':
-                        return B
-                elif side == 'right':
-                        return A
+                if not pair(A, vertex) in edge_dict:
+                        edge_dict[pair(A, vertex)] = set([B])
                 else:
-                        return B, A
+                        edge_dict[pair(A, vertex)] |= set([B])
+                if not pair(B, vertex) in edge_dict:
+                        edge_dict[pair(B, vertex)] = set([A])
+                else:
+                        edge_dict[pair(B, vertex)] |= set([A])
+                
         else:
-                print('no')
                 del edge_dict[pair(A, B)]
-                edge_dict[pair(vertex, C)] = set([A, B])
-                l = flip(A, C, vertex, B, 'left')
-                r = flip(C, B, vertex, A, 'right')
-                if side == 'left':
-                        return l
-                elif side == 'right':
-                        return r
-                else:
-                        return l, r
-        
+                edge_dict[pair(A, C)] ^= set([B])
+                edge_dict[pair(C, B)] ^= set([A])
+                flip(A, C, vertex)
+                flip(C, B, vertex)
+
+
  
 def pair(A, B):
         if A < B:
@@ -129,32 +129,19 @@ def alg(points):
         edge_dict[pair(A, C)] = set([B])
         edge_dict[pair(B, C)] = set([A])
 
-
         hull = []
         if point_dict[A].y == point_dict[B].y:
                 hull = [A, C, B]
         else:
                 hull = [A, B, C]
         
-        print(tmp)
-
         for vertex in tmp:
                 index = None
                 bas = []
-                print(hull)
                 new_hull = list(hull)
                 for i in range(-1, len(hull) - 1):
-                        print(hull, vertex)
                         if is_on_right_side(vertex, hull[i], hull[i + 1]):
-                                l, r = flip(hull[i], hull[i + 1], vertex, None)
-                                if pair(hull[i], vertex) in edge_dict:
-                                        edge_dict[pair(hull[i], vertex)] |= set([l])
-                                else:
-                                        edge_dict[pair(vertex, hull[i])] = set([l])
-                                if pair(vertex, hull[i + 1]) in edge_dict:
-                                        edge_dict[pair(vertex, hull[i + 1])] |= set([r])
-                                else:
-                                        edge_dict[pair(vertex, hull[i + 1])] = set([r])
+                                flip(hull[i], hull[i + 1], vertex)
                                 if index == None:
                                         if i == -1:
                                                 new_hull.append(vertex)
@@ -168,10 +155,7 @@ def alg(points):
                                                 new_hull.remove(hull[i + 1])
 
                                 bas += [hull[i], hull[i + 1]]
-                                
-
                 hull = new_hull
-        print(hull)
 
 if __name__ == '__main__':
         points = get_points()
@@ -191,6 +175,7 @@ if __name__ == '__main__':
                 C = point_dict[key[2]]
                 f.write('%s %s %s %s %s %s\n' % (A.x, A.y, B.x, B.y, C.x, C.y))
         f.close()
+
 
 
         

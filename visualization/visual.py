@@ -43,13 +43,14 @@ class Window(QWidget):
                 self.figure = [[]]
                 while True:
                         line = f.readline()
+                        print(line, end='')
                         if line == '':
                                 break
                         elif len(line) < 3:
                                 self.figure.append([])
                         else:
                                 # self.figure[-1].append([int(float(i) * 100 + 200) for i in line.split()])
-                                self.figure[-1].append([int(i) for i in line.split()])
+                                self.figure[-1].append([int(float(i)) for i in line.split()])
                 f.close()
                 self.update()
         
