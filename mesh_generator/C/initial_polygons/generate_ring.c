@@ -16,8 +16,8 @@ int main(int argc, char *argv[]) {
 	double y = 0.0;
 	printf("%lf %lf\n", x, y);
 	for (int i = 1; i < outter_points_num; ++i) {
-		x = cos((-2*PI/outter_points_num) * i) * outter_radius;
-		y = sin((-2*PI/outter_points_num) * i) * outter_radius;
+		x = cos((2*PI/outter_points_num) * i) * outter_radius;
+		y = sin((2*PI/outter_points_num) * i) * outter_radius;
 
 		printf("%lf %lf\n", x, y);
 	}
@@ -28,8 +28,8 @@ int main(int argc, char *argv[]) {
 	y = 0.0;
 	printf("%lf %lf\n", x, y);
 	for (int i = 1; i < inner_points_num; ++i) {
-		x = cos((2*PI/inner_points_num) * i) * inner_radius;
-		y = sin((2*PI/inner_points_num) * i) * inner_radius;
+		x = cos((-2*PI/inner_points_num) * i) * inner_radius;
+		y = sin((-2*PI/inner_points_num) * i) * inner_radius;
 
 		printf("%lf %lf\n", x, y);
 	}

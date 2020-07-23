@@ -1,0 +1,3 @@
+/home/street-magic/Code/Poisson-FEM/mesh_generator/C/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/street-magic/Code/Poisson-FEM/mesh_generator/C/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/street-magic/Code/Poisson-FEM/mesh_generator/C/cmake-build-debug/CMakeFiles/Poisson-FEM.dir

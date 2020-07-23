@@ -1,0 +1,4 @@
+"/mnt/Data/Linux Program Files/clion-2020.1.2/bin/cmake/linux/bin/cmake" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/street-magic/Code/Poisson-FEM/mesh_generator/C
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/street-magic/Code/Poisson-FEM/mesh_generator/C/cmake-build-debug

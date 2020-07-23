@@ -15,6 +15,10 @@ int main(int argc, char *argv[]) {
 	edge_data.begins_at = edge_data.ends_at = NULL;
 	edge_data.next = NULL;
 
+	Edge front; //head of the advancing front datalist
+	front.begins_at = front.ends_at = NULL;
+	front.prev = front.next = NULL;
+	
 	FILE *fp = fopen(argv[1], "r");
 	int BUFSIZE = 99;
 	char buff[BUFSIZE];
@@ -35,26 +39,42 @@ int main(int argc, char *argv[]) {
 				first_cont_node = new_node;
 			} else {
 				add_edge(&edge_data, last_node, new_node);
+				add_edge(&front, last_node, new_node);
 			}
 		} else {
-			//printf("closing edge\n");
 			Node* last_node = first_cont_node;
 			while (last_node->next != NULL)
 				last_node = last_node->next;
-			//printf("%lf %lf\n", last_node->x, last_node->y);
 			add_edge(&edge_data, last_node, first_cont_node);
+			add_edge(&front, last_node, first_cont_node);
 			first_cont_node = NULL;
 		}
 	}
 	fclose(fp);
 
+	double min_angle = 0.69; //40 deg
+	double max_len = 0.15;
+	prepare_initial_front(&front, &edge_data, &node_data, min_angle, max_len);
+	Edge* black_box = front.next;
+	while(front.next != NULL) {
+		advance(&front, &edge_data, &node_data, min_angle, max_len);
+	}
+
 	Edge* cur_edge = edge_data.next;
-	while (cur_edge != NULL) {
-		if (python) {
+	if (python) {
+		printf("import matplotlib.pyplot as plt\n");
+		while (cur_edge != NULL) {
 			printf("plt.plot([%lf,%lf],",cur_edge->begins_at->x, cur_edge->ends_at->x);
-			printf("[%lf,%lf],'k-')\n",cur_edge->begins_at->y, cur_edge->ends_at->y);
+			printf("[%lf,%lf],'.-b')\n",cur_edge->begins_at->y, cur_edge->ends_at->y);
+			cur_edge = cur_edge->next;
 		}
-		cur_edge = cur_edge->next;
+		/*cur_edge = black_box;
+        while (cur_edge != NULL) {
+            printf("plt.plot([%lf,%lf],",cur_edge->begins_at->x, cur_edge->ends_at->x);
+            printf("[%lf,%lf],'.-r')\n",cur_edge->begins_at->y, cur_edge->ends_at->y);
+            cur_edge = cur_edge->next;
+        }*/
+		printf("plt.axis('equal')\nplt.show()\n");
 	}
 	return 0;
 }

@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/street-magic/Code/Poisson-FEM/mesh_generator/C/Node.h
+stdlib.h
+-
+math.h
+-
+stdbool.h
+-
+
+/home/street-magic/Code/Poisson-FEM/mesh_generator/C/main.c
+stdio.h
+-
+limits.h
+-
+float.h
+-
+string.h
+-
+stdbool.h
+-
+Node.h
+/home/street-magic/Code/Poisson-FEM/mesh_generator/C/Node.h
+
