@@ -51,7 +51,7 @@ typedef struct Edge Edge;
 
 void draw_edge(Edge* cur_edge){
     printf("plt.plot([%lf,%lf],",cur_edge->begins_at->x, cur_edge->ends_at->x);
-    printf("[%lf,%lf],'.-b')\n",cur_edge->begins_at->y, cur_edge->ends_at->y);
+    printf("[%lf,%lf],'.-r')\n",cur_edge->begins_at->y, cur_edge->ends_at->y);
 }
 
 Edge* create_edge (Node* start, Node* finish) {
@@ -150,9 +150,10 @@ Node* create_ideal_node(Edge* edge) {
 	double y1 = edge->begins_at->y;
 	double x2 = edge->ends_at->x;
 	double y2 = edge->ends_at->y;
-	
-	double new_x = (x1 + x2)/2 - 0.866*(y2 - y1); //0.866
-	double new_y = (y1 + y2)/2 + 0.866*(x2 - x1);
+	double l = len(edge);
+
+	double new_x = (x1 + x2)/2 - 0.04*(y2 - y1)/l; //0.866
+	double new_y = (y1 + y2)/2 + 0.04*(x2 - x1)/l;
 	Node* new_node = create_node(new_x, new_y);
 	return new_node;
 }
@@ -207,27 +208,39 @@ bool intersect(Edge* AB, Node* C, Edge* UV) {
 	}
 	return true;
 }
+bool angle_check(Node* A, Node* B, Node* C, double min_angle, double max_len){
 
+    double a = len_nodes(A, B);
+    double b = len_nodes(B, C);
+    double c = len_nodes(C, A);
+    double alpha = acos((b*b + c*c - a*a)/(2*b*c));
+    double betta = acos((a*a + c*c - b*b)/(2*a*c));
+    double gamma = acos((a*a + b*b - c*c)/(2*a*b));
+    if (alpha > min_angle && betta > min_angle && gamma > min_angle &&
+        a <= max_len*2 && b <= max_len*2 && c <= max_len*2)
+        return true;
+    return false;
+}
 bool is_acceptable(Edge* chosen_edge, Node* candidate_node, Edge* front, double min_angle, double max_len) {
 	if (d(chosen_edge->begins_at, chosen_edge->ends_at, candidate_node) < 0) {
 		return false;
 	}
-	
+
 	Edge* cur_front = front->next;
 	while (cur_front != NULL) {
 		if (intersect(chosen_edge, candidate_node, cur_front)) {
-            /*printf("# UNWANTED INTERSECTION\n");
+            printf("# UNWANTED INTERSECTION\n");
             draw_edge(chosen_edge);
             draw_edge(cur_front);
             draw_edge(create_edge(chosen_edge->begins_at, candidate_node));
-            draw_edge(create_edge(candidate_node, chosen_edge->ends_at));*/
-
+            draw_edge(create_edge(candidate_node, chosen_edge->ends_at));
 			return false;
 		}
 		cur_front = cur_front->next;
 	}
-	
-	return true;
+	if (angle_check(chosen_edge->begins_at, chosen_edge->ends_at, candidate_node, min_angle, max_len))
+	    return true;
+	return false;
 }
 
 void advance (Edge* front, Edge* edges, Node* nodes, double min_angle, double max_len) {
@@ -244,7 +257,7 @@ void advance (Edge* front, Edge* edges, Node* nodes, double min_angle, double ma
 		cur_front = cur_front->next;
 	} //found min_front
 
-	double alpha = 0.5;
+	double alpha = 0.9;
 	Node* ideal_node = create_ideal_node(min_front);
 	Node* best_node = NULL;
 	min_len = 1000000000;

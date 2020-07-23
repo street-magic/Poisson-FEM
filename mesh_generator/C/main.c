@@ -52,8 +52,8 @@ int main(int argc, char *argv[]) {
 	}
 	fclose(fp);
 
-	double min_angle = 0.69; //40 deg
-	double max_len = 0.15;
+	double min_angle = 0.1; //? deg
+	double max_len = 0.1;
 	prepare_initial_front(&front, &edge_data, &node_data, min_angle, max_len);
 	Edge* black_box = front.next;
 	while(front.next != NULL) {
@@ -68,8 +68,8 @@ int main(int argc, char *argv[]) {
 			printf("[%lf,%lf],'.-b')\n",cur_edge->begins_at->y, cur_edge->ends_at->y);
 			cur_edge = cur_edge->next;
 		}
-		/*cur_edge = black_box;
-        while (cur_edge != NULL) {
+		cur_edge = black_box;
+        /*while (cur_edge != NULL) {
             printf("plt.plot([%lf,%lf],",cur_edge->begins_at->x, cur_edge->ends_at->x);
             printf("[%lf,%lf],'.-r')\n",cur_edge->begins_at->y, cur_edge->ends_at->y);
             cur_edge = cur_edge->next;
