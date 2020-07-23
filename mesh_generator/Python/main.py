@@ -1,12 +1,12 @@
 import argparse
-import queue
 import numpy as np
-from shapely.geometry import Point as PNT, Polygon as POLY
+
 
 point_dict  = {}
 contour_list = []
 triagle_dict = {}
 edge_dict = {}
+
 
 class Point:
         x = None
@@ -15,9 +15,6 @@ class Point:
         def __init__(self, coor):
                 self.x = coor[0]
                 self.y = coor[1]
-        def __str__(self):
-                return '{%s %s}' % (self.x, self.y)
-
 
 def is_it_inside(contour, point):
         for i in range(-1, len(contour) - 1):
@@ -48,15 +45,13 @@ def get_points():
                         points = []
         file_figure.close()
 
-
-
-
         max_dist = 0
         min_x, min_y = float('inf'), float('inf')
         max_x, max_y = float('-inf'), float('-inf')
         for i in range(len(points)):
                 for j in range(i + 1, len(points)):
-                        dist = (point_dict[points[i]].x - point_dict[points[j]].x) ** 2 + (point_dict[points[i]].y - point_dict[points[j]].y) ** 2
+                        dist = (point_dict[points[i]].x - point_dict[points[j]].x) ** 2 + \
+                               (point_dict[points[i]].y - point_dict[points[j]].y) ** 2
                         dist = dist ** 0.5
                         max_dist = max(max_dist, dist)
                 min_x = min(min_x, point_dict[points[i]].x)
@@ -64,7 +59,7 @@ def get_points():
                 max_x = max(max_x, point_dict[points[i]].x)
                 max_y = max(max_y, point_dict[points[i]].y)
 
-        cell = max_dist / 50
+        cell = max_dist / 20
         x = min_x + cell
         while x < max_x:
                 y = min_y + cell
@@ -77,8 +72,6 @@ def get_points():
                                 count += 1
                         y += cell
                 x += cell
-        # for key in point_dict:
-        #         print(key, point_dict[key])
         return list(range(count))
 
 def is_on_right_side(vertex, point_begin, point_end):
@@ -114,7 +107,6 @@ def flip(A, B, vertex):
                 return
 
         C = list(edge_dict[pair(A, B)])[0]         
-
         is_good = delaunay_condition(B, C, A, vertex)
         if is_good:
                 edge_dict[pair(A, B)] |= set([vertex])
@@ -125,8 +117,7 @@ def flip(A, B, vertex):
                 if not pair(B, vertex) in edge_dict:
                         edge_dict[pair(B, vertex)] = set([A])
                 else:
-                        edge_dict[pair(B, vertex)] |= set([A])
-                
+                        edge_dict[pair(B, vertex)] |= set([A])       
         else:
                 del edge_dict[pair(A, B)]
                 edge_dict[pair(A, C)] ^= set([B])
@@ -167,8 +158,7 @@ def alg(points):
         if point_dict[A].y == point_dict[B].y:
                 hull = [A, C, B]
         else:
-                hull = [A, B, C]
-        
+                hull = [A, B, C]  
         for vertex in tmp:
                 index = None
                 bas = []
@@ -187,10 +177,8 @@ def alg(points):
                                                 new_hull.remove(hull[i])
                                         if hull[i + 1] in bas:
                                                 new_hull.remove(hull[i + 1])
-
                                 bas += [hull[i], hull[i + 1]]
                 hull = new_hull
-
 
 def remove_unnecessary():
         for contour in contour_list:
@@ -199,8 +187,6 @@ def remove_unnecessary():
                         B = contour[i + 1]
                         if not pair(A, B) in edge_dict:
                                 continue
-                        # print(A, B, edge_dict[pair(A, B)])
-                        
                         for vertex in list(edge_dict[pair(A, B)]):
                                 if is_on_right_side(vertex, A, B):
                                         edge_dict[pair(A, B)] ^= set([vertex])
