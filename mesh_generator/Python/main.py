@@ -59,7 +59,7 @@ def get_points():
                 max_x = max(max_x, point_dict[points[i]].x)
                 max_y = max(max_y, point_dict[points[i]].y)
 
-        cell = max_dist / 20
+        cell = max_dist / 15
         x = min_x + cell
         while x < max_x:
                 y = min_y + cell
@@ -72,6 +72,7 @@ def get_points():
                                 count += 1
                         y += cell
                 x += cell
+        
         return list(range(count))
 
 def is_on_right_side(vertex, point_begin, point_end):
@@ -199,7 +200,7 @@ if __name__ == '__main__':
         points = get_points()
 
         alg(points)
-        remove_unnecessary()
+        # remove_unnecessary()
 
         count = 0
         for key in edge_dict:
@@ -209,13 +210,37 @@ if __name__ == '__main__':
                                 triagle_dict[tmp] = count
                                 count += 1
 
-        f = open('tmp/result.txt', 'w')
+        f = open('output/triangulation.txt', 'w')
         for key in triagle_dict:
                 A = point_dict[key[0]]
                 B = point_dict[key[1]]
                 C = point_dict[key[2]]
                 f.write('%s %s %s %s %s %s\n' % (A.x, A.y, B.x, B.y, C.x, C.y))
         f.close()
+
+        f = open('output/points.txt', 'w')
+        for key in point_dict:
+                f.write('%s %s %s\n' % (key, point_dict[key].x, point_dict[key].y))
+        f.close()
+        
+        f = open('output/contour.txt', 'w')
+        f.write(' '.join([str(i) for i in contour_list[0]]))
+        f.close()
+
+        f = open('output/edges.txt', 'w')
+        for key in edge_dict:
+                # print(key, edge_dict[key])
+                f.write('%s %s\n' % (key[0], key[1]))
+                for v in list(edge_dict[key]):
+                        f.write('%s %s\n' % (key[0], v))
+                        f.write('%s %s\n' % (key[1], v))
+        f.close()
+
+        f = open('output/triangles.txt', 'w')
+        for key in triagle_dict:
+                f.write('%s %s %s\n' % (key[0], key[1], key[2]))
+        f.close()
+
 
 
 
