@@ -44,7 +44,7 @@ def get_points():
                         contour_list.append(points)
                         points = []
         file_figure.close()
-
+        
         max_dist = 0
         min_x, min_y = float('inf'), float('inf')
         max_x, max_y = float('-inf'), float('-inf')
@@ -59,12 +59,12 @@ def get_points():
                 max_x = max(max_x, point_dict[points[i]].x)
                 max_y = max(max_y, point_dict[points[i]].y)
 
-        cell = max_dist / 15
+        cell = max_dist / 10
         x = min_x + cell
         while x < max_x:
                 y = min_y + cell
                 while y < max_y:
-                        point = Point([x + np.random.randint(-5, 5), y + np.random.randint(-5, 5)])
+                        point = Point([x + np.random.randint(-10, 10), y + np.random.randint(-10, 10)])
                         point_dict[count] = point
                         if not is_it_inside(contour_list[0], count):
                                 del point_dict[count]
@@ -150,7 +150,7 @@ def alg(points):
         tmp.remove(A)
         tmp.remove(B)
         tmp.remove(C)
-
+        
         edge_dict[pair(A, B)] = set([C])
         edge_dict[pair(A, C)] = set([B])
         edge_dict[pair(B, C)] = set([A])
@@ -161,12 +161,16 @@ def alg(points):
         else:
                 hull = [A, B, C]  
         for vertex in tmp:
+                
                 index = None
                 bas = []
                 new_hull = list(hull)
                 for i in range(-1, len(hull) - 1):
+                        
                         if is_on_right_side(vertex, hull[i], hull[i + 1]):
+                                
                                 flip(hull[i], hull[i + 1], vertex)
+                                
                                 if index == None:
                                         if i == -1:
                                                 new_hull.append(vertex)
@@ -201,7 +205,7 @@ if __name__ == '__main__':
 
         alg(points)
         # remove_unnecessary()
-
+        # print(edge_dict)
         count = 0
         for key in edge_dict:
                 for v in list(edge_dict[key]):
@@ -240,6 +244,7 @@ if __name__ == '__main__':
         for key in triagle_dict:
                 f.write('%s %s %s\n' % (key[0], key[1], key[2]))
         f.close()
+        # print(99 in edge_dict)
 
 
 

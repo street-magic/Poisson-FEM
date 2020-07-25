@@ -147,7 +147,7 @@ if __name__ == '__main__':
         f = open('output/triangles.txt', 'r')
         while True:
                 line = f.readline()
-                if line == '':
+                if len(line) <= 2:
                         break
                 a, b, c = [int(i) for i in line.strip().split()]
                 if not a in triagle_dict:
@@ -161,14 +161,9 @@ if __name__ == '__main__':
                 triagle_dict[b].add((a, c))
                 triagle_dict[c].add((a, b))
         f.close()     
-        
         for point in point_dict:
                 cell_dict[point] = Cell(point)
 
-        
-
-        # print(len(point_dict))
-        # print(point_dict.keys())
         source = np.random.randint(0, len(point_dict))
         print(source)
         cell_dict[source].value = 1000

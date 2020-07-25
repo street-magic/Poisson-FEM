@@ -4,6 +4,8 @@ from PyQt5.QtGui import QIcon, QPainter, QColor, QFont, QPen, QColor, QPainterPa
 from PyQt5.QtCore import Qt
 
 class Window(QWidget):
+        point_dict = None
+        contour = None
         points = None
         figure = None
         triangulation = None
@@ -24,9 +26,9 @@ class Window(QWidget):
                 button_build.setGeometry(10, 10, 100, 30)
                 button_build.clicked.connect(self.draw_points)
 
-                button_open = QPushButton('Open file', self)
+                button_open = QPushButton('Contour', self)
                 button_open.setGeometry(120, 10, 100, 30)
-                button_open.clicked.connect(self.open_file)
+                button_open.clicked.connect(self.draw_contour)
 
                 button_clear = QPushButton('Clear', self)
                 button_clear.setGeometry(230, 10, 100, 30)
@@ -42,23 +44,22 @@ class Window(QWidget):
 
                 self.show()
 
-        def open_file(self):
-                fname = QFileDialog.getOpenFileName(self, 'Open file')[0]
-                if fname == '':
-                        return
-                f = open(fname, 'r')
-                self.figure = [[]]
+        def draw_contour(self):
+                self.point_dict = {}
+
+                f = open('output/points.txt', 'r')
                 while True:
                         line = f.readline()
-                        print(line, end='')
-                        if line == '':
+                        if len(line) <= 2:
                                 break
-                        elif len(line) < 3:
-                                self.figure.append([])
-                        else:
-                                # self.figure[-1].append([int(float(i) * 100 + 200) for i in line.split()])
-                                self.figure[-1].append([int(float(i)) for i in line.split()])
+                        v, x, y = [float(i) for i in line.strip().split()]
+                        v = int(v)
+                        self.point_dict[v] = (x, y)
                 f.close()
+                f = open('output/contour.txt', 'r')
+                self.contour = [int(i) for i in f.readline().strip().split()]
+                f.close()
+                
                 self.update()
         
         def draw_points(self):
@@ -76,7 +77,9 @@ class Window(QWidget):
 
 
         def clear_widget(self):
+                self.point_dict = None
                 self.points = None
+                self.contour = None
                 self.figure = None
                 self.triangulation = None
                 self.cells = None
@@ -132,6 +135,16 @@ class Window(QWidget):
                                 pen.setWidth(5)
                                 painter.setPen(pen)
                                 painter.drawPoint(30 + p[0], 720 - p[1])
+
+                if self.contour != None:
+                        pen = QPen()
+                        pen.setColor(Qt.black)
+                        painter.setPen(pen)
+                        for i in range(-1, len(self.contour) - 1):
+                                painter.drawLine(30 + self.point_dict[self.contour[i]][0],
+                                                 720 - self.point_dict[self.contour[i]][1],
+                                                 30 + self.point_dict[self.contour[i + 1]][0],
+                                                 720 - self.point_dict[self.contour[i + 1]][1])
 
                 if self.figure != None:
                         for contour in self.figure:
