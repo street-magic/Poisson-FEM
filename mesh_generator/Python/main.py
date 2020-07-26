@@ -59,12 +59,12 @@ def get_points():
                 max_x = max(max_x, point_dict[points[i]].x)
                 max_y = max(max_y, point_dict[points[i]].y)
 
-        cell = max_dist / 10
+        cell = max_dist / 15
         x = min_x + cell
         while x < max_x:
                 y = min_y + cell
                 while y < max_y:
-                        point = Point([x + np.random.randint(-10, 10), y + np.random.randint(-10, 10)])
+                        point = Point([x + np.random.randint(-5, 5), y + np.random.randint(-5, 5)])
                         point_dict[count] = point
                         if not is_it_inside(contour_list[0], count):
                                 del point_dict[count]

@@ -145,6 +145,15 @@ class Window(QWidget):
                                                  720 - self.point_dict[self.contour[i]][1],
                                                  30 + self.point_dict[self.contour[i + 1]][0],
                                                  720 - self.point_dict[self.contour[i + 1]][1])
+                        path = QPainterPath()
+                        path.moveTo(30 + self.point_dict[self.contour[-1]][0], 720 - self.point_dict[self.contour[-1]][1])
+                        for i in range(len(self.contour)):
+                                path.lineTo(30 + self.point_dict[self.contour[i]][0], 720 - self.point_dict[self.contour[i]][1])
+                        
+                        path.closeSubpath()
+                        
+                        painter.fillPath(path, QColor(0, 0, 255))
+
 
                 if self.figure != None:
                         for contour in self.figure:
